@@ -18,7 +18,28 @@ async function run() {
       await client.connect();
       const database = client.db("Barhouse");
       const productsCollection = database.collection("products");
-      const orderCollection = database.collection("products");
+      const reviewsCollection= database.collection("reviews");
+      
+
+      // POST Reviews
+      app.post('/addReviews', async (req, res) => {
+        const review = req.body;
+        const result = await reviewsCollection.insertOne(review)
+        res.send(result);
+      })
+
+      // GET products
+      app.get('/addProducts', async (req, res) => {
+        const result = await productsCollection.find({}).toArray();
+        res.json(result);
+      })
+
+      // post products
+      app.post('/addProducts', async (req, res) => {
+        const products = req.body;
+        const result = await productsCollection.insertOne(products)
+        res.send(result);
+      })
     }
     finally {
     //   await client.close();
