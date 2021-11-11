@@ -18,7 +18,7 @@ async function run() {
       await client.connect();
       const database = client.db("Barhouse");
       const productsCollection = database.collection("products");
-
+      const orderCollection = database.collection("products");
     }
     finally {
     //   await client.close();
