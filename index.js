@@ -3,6 +3,7 @@ const express = require('express');
 require('dotenv').config();
 const cors =require('cors')
 const app = express();
+const ObjectId = require("mongodb").ObjectId;
 
 
 app.use(cors());
@@ -19,7 +20,13 @@ async function run() {
       const database = client.db("Barhouse");
       const productsCollection = database.collection("products");
       const reviewsCollection= database.collection("reviews");
-      
+      const ordersCollection = database.collection("orders");
+
+      // GET Reviews
+      app.get('/addReviews', async (req, res) => {
+        const result = await reviewsCollection.find({}).toArray();
+        res.json(result);
+      })
 
       // POST Reviews
       app.post('/addReviews', async (req, res) => {
@@ -34,11 +41,26 @@ async function run() {
         res.json(result);
       })
 
-      // post products
+      // POST products
       app.post('/addProducts', async (req, res) => {
         const products = req.body;
         const result = await productsCollection.insertOne(products)
         res.send(result);
+      })
+      
+      // GET singleProducts
+      app.get('/purchaseProducts/:id', async (req, res) => {
+        const id = req.params.id;
+        const user = { _id: ObjectId(id) }
+        const cursor =await productsCollection.find(user).toArray();
+        res.json(cursor)
+      })
+      //POST order
+      app.post('/confirmOrder', async (req, res) => {
+        const orderss = req.body;
+        const result = await ordersCollection.insertOne(orderss)
+        // res.send(result);
+        console.log(result);
       })
     }
     finally {
