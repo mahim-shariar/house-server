@@ -65,6 +65,19 @@ async function run() {
         // console.log(result);
       })
 
+      // GET manage Order
+      app.get('/allorders', async (req, res) => {
+        const allOrders = await ordersCollection.find({}).toArray();
+        res.json(allOrders);
+      })
+
+      app.post('/confirmOrder', async (req, res) => {
+        const orderss = req.body;
+        const result = await ordersCollection.insertOne(orderss)
+        res.send(result);
+        // console.log(result);
+      })
+
          // GET myOrders
 
       app.get("/myOrders/:email", async (req, res) => {
