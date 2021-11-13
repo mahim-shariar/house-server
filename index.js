@@ -74,6 +74,14 @@ async function run() {
         res.json(result)
       });
 
+      // DELETE Order
+      app.delete('/myAllOrder/:productId', async(req,res)=> {
+        const id = req.params.productId;
+        const query = { _id: ObjectId(id) }
+        const result = await ordersCollection.deleteOne(query);
+        res.send(result);
+      })
+
       // GET Users Email
       app.get('/users/:email', async (req, res) => {
         const email = req.params.email;
