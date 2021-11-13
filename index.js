@@ -21,6 +21,7 @@ async function run() {
       const productsCollection = database.collection("products");
       const reviewsCollection= database.collection("reviews");
       const ordersCollection = database.collection("orders");
+      const usersCollection = database.collection("users");
 
       // GET Reviews
       app.get('/addReviews', async (req, res) => {
@@ -55,12 +56,59 @@ async function run() {
         const cursor =await productsCollection.find(user).toArray();
         res.json(cursor)
       })
+
       //POST order
       app.post('/confirmOrder', async (req, res) => {
         const orderss = req.body;
         const result = await ordersCollection.insertOne(orderss)
-        // res.send(result);
-        console.log(result);
+        res.send(result);
+        // console.log(result);
+      })
+
+         // GET myOrders
+
+      app.get("/myOrders/:email", async (req, res) => {
+        const email = req.params.email;
+        const cursor = { Email: email }
+        const result=await ordersCollection.find(cursor).toArray()
+        res.json(result)
+      });
+
+      // GET Users Email
+      app.get('/users/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = { email: email };
+        const user = await usersCollection.findOne(query);
+        let isAdmin = false;
+        if (user?.role === 'admin') {
+            isAdmin = true;
+        }
+        res.json({ admin: isAdmin });
+    })
+
+
+      // POST Users Collection
+      app.post('/users', async(req,res)=> {
+        const user = req.body;
+        const result = await usersCollection.insertOne(user);
+        res.json(result);
+      })
+
+      app.put('/users', async (req, res) => {
+        const user = req.body;
+        const filter = { email: user.email }
+        const options = { upsert: true };
+        const updateDoc = { $set: user };
+        const result = await usersCollection.updateOne(filter,updateDoc, options );
+        res.json(result);
+      })
+      
+      app.put('/users/admin', async (req, res) => {
+        const user = req.body;
+        const filter = { email: user.email };
+        const updateDoc = { $set: { role: 'admin' } };
+        const result = await usersCollection.updateOne(filter, updateDoc);
+        res.json(result);
       })
     }
     finally {
@@ -78,12 +126,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
-
-
-
-
-
-
-
-
-
