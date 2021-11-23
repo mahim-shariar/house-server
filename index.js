@@ -48,12 +48,12 @@ async function run() {
         const result = await productsCollection.insertOne(products)
         res.send(result);
       })
-      
+     
       // GET singleProducts
       app.get('/purchaseProducts/:id', async (req, res) => {
         const id = req.params.id;
         const user = { _id: ObjectId(id) }
-        const cursor =await productsCollection.find(user).toArray();
+        const cursor = await productsCollection.find(user).toArray();
         res.json(cursor)
       })
 
@@ -78,7 +78,7 @@ async function run() {
         // console.log(result);
       })
 
-         // GET myOrders
+      // GET myOrders
 
       app.get("/myOrders/:email", async (req, res) => {
         const email = req.params.email;
@@ -91,8 +91,17 @@ async function run() {
       app.delete('/myAllOrder/:productId', async(req,res)=> {
         const id = req.params.productId;
         const query = { _id: ObjectId(id) }
+        const result = await productsCollection.deleteOne(query);
+        console.log(result);
+        res.json(result);
+      })
+      // DELETE Order
+      app.delete('/myAllOrders/:productId', async(req,res)=> {
+        const id = req.params.productId;
+        const query = { _id: ObjectId(id) }
         const result = await ordersCollection.deleteOne(query);
-        res.send(result);
+        console.log(result);
+        res.json(result);
       })
 
       // GET Users Email
@@ -141,7 +150,7 @@ async function run() {
 
 
 app.get('/', (req, res) => {
-  res.send('Hello World!This is my BarHouse Web Application..')
+  res.send('Hello World!This is my BarHouse Web Application.....')
 })
 
 app.listen(port, () => {
