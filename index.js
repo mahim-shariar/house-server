@@ -150,7 +150,7 @@ async function run() {
 
 
 app.get('/', (req, res) => {
-  res.send('Hello World!This is my BarHouse Web Application.....')
+  res.send('Hello World!This is my BarHouse Web Application.')
 })
 
 app.listen(port, () => {
