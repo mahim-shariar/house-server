@@ -4,6 +4,7 @@ require('dotenv').config();
 const cors = require('cors');
 const app = express();
 const ObjectId = require("mongodb").ObjectId;
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 
 app.use(cors());
@@ -55,6 +56,14 @@ async function run() {
         const user = { _id: ObjectId(id) }
         const cursor = await productsCollection.find(user).toArray();
         res.json(cursor)
+      })
+
+      //
+      app.get('/confirmOrder/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await ordersCollection.findOne(query);
+        res.json(result);
       })
 
       //POST order
@@ -140,6 +149,21 @@ async function run() {
         const result = await usersCollection.updateOne(filter, updateDoc);
         res.json(result);
       })
+     
+      // payment method
+      app.post("/create-payment-intent", async (req, res) => {
+        const paymentInfo = req.body;
+        // Create a PaymentIntent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: paymentInfo.price*100,
+          currency: "usd",
+          payment_method_types: ['card']
+        });
+      
+        res.json({clientSecret: paymentIntent.client_secret});
+      });
+
+
     }
     finally {
     //   await client.close();
