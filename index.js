@@ -159,11 +159,8 @@ async function run() {
           currency: "usd",
           payment_method_types: ['card']
         });
-      
         res.json({clientSecret: paymentIntent.client_secret});
       });
-
-
     }
     finally {
     //   await client.close();
